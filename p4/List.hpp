@@ -6,6 +6,7 @@
  * EECS 280 Project 4
  */
 
+#include <__config>
 #include <iostream>
 #include <iterator> //std::bidirectional_iterator_tag
 #include <cassert>  //assert
@@ -17,40 +18,126 @@ class List {
 public:
 
   //EFFECTS:  returns true if the list is empty
-  bool empty() const;
+  bool empty() const {
+    if (first == nullptr){
+        return true;
+    }
+  }
 
   //EFFECTS: returns the number of elements in this List
   //HINT:    Traversing a list is really slow. Instead, keep track of the size
   //         with a private member variable. That's how std::list does it.
-  int size() const;
+  int size() const{
+    return sizeList;
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
-  T & front();
+  T & front(){
+    return &first->datum;
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
-  T & back();
+  T & back(){
+    return &last->datum;
+  }
 
   //EFFECTS:  inserts datum into the front of the list
-  void push_front(const T &datum);
+  void push_front(const T &datum){
+    // allocate the new node in the heap
+   
+    Node *newFirst = new Node;
+    newFirst->datum = datum;
+    sizeList++;
+    // case where the list is initially empty
+    if (empty()){
+      first = newFirst;
+      last = newFirst;
+      newFirst->prev = nullptr;
+      newFirst->next = nullptr;
+    } else {
+      // list is not empty
+      first->prev = newFirst;
+      newFirst->next = first;
+      first = newFirst;
+      newFirst->prev = nullptr;
+    }
+   
+
+  }
 
   //EFFECTS:  inserts datum into the back of the list
-  void push_back(const T &datum);
+  void push_back(const T &datum){
+    Node *newLast = new Node;
+    newLast->datum = datum;
+    sizeList++;
+
+    if(empty()){
+      first = newLast;
+      last = newLast;
+      newLast->prev = nullptr;
+      newLast->next = nullptr;
+    }
+    else{
+      last->next = newLast;
+      newLast->prev = last;
+      last = newLast;
+      newLast->next = nullptr;
+    }
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: may invalidate list iterators
   //EFFECTS:  removes the item at the front of the list
-  void pop_front();
+  void pop_front(){
+    if (first == last){
+      // there is only 1 node in the list
+      Node* onlyElement = first;
+      delete onlyElement;
+      sizeList--;
+      first = nullptr;
+      last = nullptr;
+    }
+    else{
+      Node* nodeToRemove = first;
+      first = first->next;
+      first->prev = nullptr;
+      delete nodeToRemove;
+      sizeList--;
+    }
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: may invalidate list iterators
   //EFFECTS:  removes the item at the back of the list
-  void pop_back();
+  void pop_back(){
+    if(first == last){
+      //Only one node in list
+      Node* oneElement = first;
+      delete oneElement;
+      sizeList--;
+      first = nullptr;
+      last = nullptr;
+    }
+    else{
+      Node* removeLast = last;
+      last = last->prev;
+      last->next = nullptr;
+      delete removeLast;
+      sizeList--;
+    }
+   
+  }
 
   //MODIFIES: may invalidate list iterators
   //EFFECTS:  removes all items from the list
-  void clear();
+  void clear(){
+    int numIterations = sizeList;
+    for (int i = 0; i<numIterations; i++){
+      pop_front();
+    }
+  }
 
   // You should add in a default constructor, destructor, copy constructor,
   // and overloaded assignment operator, if appropriate. If these operations
@@ -71,7 +158,8 @@ private:
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
-
+  
+  int sizeList; // stores current size of the list
 public:
   ////////////////////////////////////////
   class Iterator {
