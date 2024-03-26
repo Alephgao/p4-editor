@@ -61,6 +61,17 @@ public:
       first = newFirst;
       newFirst->prev = nullptr;
     }
+
+  /* can we do this instead?
+      Node *newFirst = new Node{datum, nullptr, first};
+    if (empty()) {
+      first = last = newFirst;
+    } else {
+      first->prev = newFirst;
+      first = newFirst;
+    }
+    sizeList++;
+  */
    
 
   }
@@ -243,6 +254,31 @@ public:
       return &operator*();
     }
 
+    T& operator*() const {
+      assert(node_ptr != nullptr);
+      return node_ptr->datum;
+    }
+
+    Iterator& operator++() { // prefix ++
+      assert(node_ptr != nullptr);
+      node_ptr = node_ptr->next;
+      return *this;
+    }
+
+    Iterator operator++(int /*dummy*/) { // postfix ++
+      Iterator temp = *this;
+      ++(*this);
+      return temp;
+    }
+
+    bool operator==(const Iterator& other) const {
+      return node_ptr == other.node_ptr && list_ptr == other.list_ptr;
+    }
+
+    bool operator!=(const Iterator& other) const {
+      return !(*this == other);
+    }
+
   private:
     const List *list_ptr; //pointer to the List associated with this Iterator
     Node *node_ptr; //current Iterator position is a List node
@@ -250,6 +286,8 @@ public:
 
 
     // add any friend declarations here
+
+    friend class List;
 
 
     // construct an Iterator at a specific position in the given List
@@ -259,22 +297,65 @@ public:
   ////////////////////////////////////////
 
   // return an Iterator pointing to the first element
-  Iterator begin() const;
+  Iterator begin() const{
+    return Iterator(this, first);
+  }
 
   // return an Iterator pointing to "past the end"
-  Iterator end() const;
+  Iterator end() const{
+    return Iterator(this, nullptr);
+  }
 
   //REQUIRES: i is a valid, dereferenceable iterator associated with this list
   //MODIFIES: may invalidate other list iterators
   //EFFECTS: Removes a single element from the list container.
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
-  Iterator erase(Iterator i);
+  Iterator erase(Iterator i){
+
+    Iterator poop = Iterator(this, node->next);
+
+    Node *temp = i.node_ptr;
+
+    if (node == first) {
+      pop_front();
+    } else if (node == last) {
+      pop_back();
+    } else {
+      node->prev->next = node->next;
+      node->next->prev = node->prev;
+      delete node;
+      sizeList--;
+    }
+
+    return poop;
+
+  }
 
   //REQUIRES: i is a valid iterator associated with this list
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
-  Iterator insert(Iterator i, const T &datum);
+  Iterator insert(Iterator i, const T &datum){
+    Node *food = new Node{datum, nullptr, nullptr};
+    if(i == begin()){
+      push_front(datum);
+      return begin();
+    }
+    else if(i == end()){
+      push_back(datum);
+      return Iterator(this, last);
+    }
+    else{
+      Node *temp = i.node_ptr;
+      food->next = temp;
+      food->prev = temp->prev;
+      temp->prev->next = food;
+      temp->prev = food;
+      sizeList++;
+    }
+    
+    return Iterator(this, food);
+  }
 
 };//List
 
