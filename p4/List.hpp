@@ -169,7 +169,13 @@ private:
 
   //REQUIRES: list is empty
   //EFFECTS:  copies all nodes from other to this
-  void copy_all(const List<T> &other);
+  void copy_all(const List<T> &other){
+    Node *temp = other.first;
+    while (temp != nullptr){
+      push_back(temp->datum);
+      temp = temp->next;
+    }
+  }
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
