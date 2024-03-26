@@ -342,7 +342,6 @@ public:
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
   Iterator insert(Iterator i, const T &datum){
-    Node *food = new Node{datum, nullptr, nullptr};
     if (i == begin()) {
         push_front(datum);
         return begin();
@@ -352,15 +351,17 @@ public:
         return Iterator(this, last);
     }
     else {
-        Node *temp = i.node_ptr;
+        Node* food = new Node;  
+        food->datum = datum;    
+        Node* temp = i.node_ptr;
         food->next = temp;
         food->prev = temp->prev;
         
-        if (temp->prev) {  
+        if (temp->prev) {
             temp->prev->next = food;
         }
         temp->prev = food;
-
+        
         sizeList++;
         return Iterator(this, food);
     }
