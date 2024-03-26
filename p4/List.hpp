@@ -191,8 +191,6 @@ public:
     // will work correctly without defining these, you should omit them. A user
     // of the class must be able to copy, assign, and destroy Iterators.
 
-    Iterator(const Iterator& other) : list_ptr(other.list_ptr), node_ptr(other.node_ptr) {}
-
     Iterator& operator=(const Iterator& other) {
       list_ptr = other.list_ptr;
       node_ptr = other.node_ptr;
@@ -299,7 +297,9 @@ public:
 
 
     // construct an Iterator at a specific position in the given List
-    Iterator(const List *lp, Node *np);
+    //Iterator(const List *lp, Node *np);
+
+    Iterator(const List *lp, Node *np) : list_ptr(lp), node_ptr(np) {}
 
   };//List::Iterator
   ////////////////////////////////////////
