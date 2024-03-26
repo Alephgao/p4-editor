@@ -19,9 +19,7 @@ public:
 
   //EFFECTS:  returns true if the list is empty
   bool empty() const {
-    if (first == nullptr){
-        return true;
-    }
+    return first == nullptr;
   }
 
   //EFFECTS: returns the number of elements in this List
@@ -143,6 +141,12 @@ public:
   // and overloaded assignment operator, if appropriate. If these operations
   // will work correctly without defining these, you should omit them. A user
   // of the class must be able to create, copy, assign, and destroy Lists.
+
+  List(): first(nullptr), last(nullptr), sizeList(0) {}
+  ~List(){
+    clear();
+  }
+
 
 private:
   //a private type
