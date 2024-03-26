@@ -32,13 +32,13 @@ public:
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
   T & front(){
-    return &first->datum;
+    return first->datum;
   }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
   T & back(){
-    return &last->datum;
+    return last->datum;
   }
 
   //EFFECTS:  inserts datum into the front of the list
@@ -184,14 +184,22 @@ public:
     // Add a default constructor here. The default constructor must set both
     // pointer members to null pointers.
 
-
+    Iterator() : list_ptr(nullptr), node_ptr(nullptr) {}
 
     // Add custom implementations of the destructor, copy constructor, and
     // overloaded assignment operator, if appropriate. If these operations
     // will work correctly without defining these, you should omit them. A user
     // of the class must be able to copy, assign, and destroy Iterators.
 
+    Iterator(const Iterator& other) : list_ptr(other.list_ptr), node_ptr(other.node_ptr) {}
 
+    Iterator& operator=(const Iterator& other) {
+      list_ptr = other.list_ptr;
+      node_ptr = other.node_ptr;
+      return *this;
+    }
+
+    ~Iterator() {}    
 
     // Your iterator should implement the following public operators:
     // *, ++ (both prefix and postfix), == and !=.
@@ -312,50 +320,51 @@ public:
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
   Iterator erase(Iterator i){
+  Node *temp = i.node_ptr;
+  Iterator poop = Iterator(this, temp->next);
 
-    Iterator poop = Iterator(this, node->next);
-
-    Node *temp = i.node_ptr;
-
-    if (node == first) {
-      pop_front();
-    } else if (node == last) {
-      pop_back();
-    } else {
-      node->prev->next = node->next;
-      node->next->prev = node->prev;
-      delete node;
-      sizeList--;
-    }
-
-    return poop;
-
+  if (temp == first) {
+    pop_front();
+  } else if (temp == last) {
+    pop_back();
+  } else {
+    temp->prev->next = temp->next;
+    temp->next->prev = temp->prev;
+    delete temp;
+    sizeList--;
   }
+
+  return poop;
+
+}
 
   //REQUIRES: i is a valid iterator associated with this list
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
   Iterator insert(Iterator i, const T &datum){
     Node *food = new Node{datum, nullptr, nullptr};
-    if(i == begin()){
-      push_front(datum);
-      return begin();
+    if (i == begin()) {
+        push_front(datum);
+        return begin();
     }
-    else if(i == end()){
-      push_back(datum);
-      return Iterator(this, last);
+    else if (i == end()) {
+        push_back(datum);
+        return Iterator(this, last);
     }
-    else{
-      Node *temp = i.node_ptr;
-      food->next = temp;
-      food->prev = temp->prev;
-      temp->prev->next = food;
-      temp->prev = food;
-      sizeList++;
+    else {
+        Node *temp = i.node_ptr;
+        food->next = temp;
+        food->prev = temp->prev;
+        
+        if (temp->prev) {  
+            temp->prev->next = food;
+        }
+        temp->prev = food;
+
+        sizeList++;
+        return Iterator(this, food);
     }
-    
-    return Iterator(this, food);
-  }
+}
 
 };//List
 
