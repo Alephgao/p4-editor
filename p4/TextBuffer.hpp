@@ -54,7 +54,12 @@ private:
 public:
   //EFFECTS: Creates an empty text buffer. Its cursor is at the past-the-end
   //         position, with row 1, column 0, and index 0.
-  TextBuffer();
+  TextBuffer(){
+    cursor = data.end();// make the cursor point to one past the end of data
+    row = 1;
+    column = 0;
+    index = 0;
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor one position forward and returns true,
@@ -62,7 +67,29 @@ public:
   //          in which case this does nothing and returns false.
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  bool forward();
+  bool forward(){
+    if (cursor == data.end()){
+      // cursor is already at one past the end, so can't do anything
+      return false;
+    }
+    else{
+      // it is valid to move the cursor
+      
+      // two cases: either you are currently newline or not (before u move cursor)
+      if (data_at_cursor()== '\n'){
+        row++;
+        column=0;
+        index++;
+
+      } else {
+        column++;
+        index++;
+      }
+      
+      cursor++;
+    }
+    return true;
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor one position backward and returns true,
@@ -73,7 +100,26 @@ public:
   //          beginning of a line to the end of the previous one.
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  bool backward();
+  bool backward(){
+    if (cursor == data.begin()){
+      return false;
+    }
+    else{
+      // you are either at the begining of a row or not
+      if (column==1){
+        row--;
+        column = compute_column();
+        index--;
+
+      }
+      else{
+        column--;
+        index--;
+      }
+      cursor--;
+    }
+    return true;
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Inserts a character in the buffer before the cursor position.
@@ -82,7 +128,19 @@ public:
   //          The cursor remains in the same place as before the insertion.
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  void insert(char c);
+  void insert(char c){
+    // make sure that if you insert a '\n' that we are handling correctly (move cursor to next line)
+    if (c =='\n'){
+      column=0;
+      row++;
+      index++;
+    }
+    else{
+    column++;
+    index++;
+    }
+    cursor++;
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Removes the character from the buffer that is at the cursor and
@@ -93,7 +151,10 @@ public:
   //          character was the last one in the buffer.
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  bool remove();
+  bool remove() {
+    // use STD erase
+
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the start of the current row (column 0).
