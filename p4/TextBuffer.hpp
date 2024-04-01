@@ -139,6 +139,7 @@ public:
     column++;
     index++;
     }
+    cursor = data.insert(cursor,c);
     cursor++;
   }
 
@@ -153,6 +154,15 @@ public:
   //          if appropriate to maintain all invariants.
   bool remove() {
     // use STD erase
+    if (cursor == data.end()){
+      return false;
+    }
+    else{
+      cursor = data.erase(cursor);
+      return true;
+      
+
+    }
 
   }
 
@@ -160,7 +170,13 @@ public:
   //EFFECTS:  Moves the cursor to the start of the current row (column 0).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  void move_to_row_start();
+  void move_to_row_start(){
+    while (column != 0){
+      cursor--;
+      column--;
+      index--;
+    }
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the end of the current row (the
@@ -168,7 +184,13 @@ public:
   //          position if the row is the last one in the buffer).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  void move_to_row_end();
+  void move_to_row_end(){
+    while (cursor != data.end() && data_at_cursor()!='\n'){
+      ++cursor;
+      ++column;
+      ++index;
+    }
+  }
 
   //REQUIRES: new_column >= 0
   //MODIFIES: *this
