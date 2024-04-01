@@ -9,6 +9,7 @@
  * EECS 280 Project 4
  */
 
+#include <algorithm>
 #include <list>
 #include <string>
 // Uncomment the following line to use your List implementation
@@ -201,7 +202,12 @@ public:
   //          the last one in the buffer).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  void move_to_column(int new_column);
+  void move_to_column(int new_column){
+    move_to_row_start();
+    while (column<=new_column && cursor != data.end() && data_at_cursor() != '\n'){
+      forward();
+    }
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the previous row, retaining the
@@ -213,7 +219,25 @@ public:
   //          not (i.e. if the cursor was already in the first row).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  bool up();
+  bool up(){
+    int goalCol = column;
+    if(row == 1){
+      return false;
+    }
+    else{
+      move_to_row_start();
+      backward();
+      if (column >= goalCol){
+        move_to_row_end();
+      }
+      else{
+        while (column > goalCol){
+          backward();
+        }
+      }
+      return true;
+    }
+  }
 
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the next row, retaining the current
@@ -226,39 +250,96 @@ public:
   //          not (i.e. if the cursor was already in the last row).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
-  bool down();
+  bool down(){
+    int colGoal = column;
+    move_to_row_end();
+    if (cursor == data.end()){
+      return false;
+    }
+    else{
+      forward();
+      move_to_row_end();
+      if (column > colGoal){
+        //cursor doesn't move
+      }
+      else{
+        move_to_row_start();
+        while (column < colGoal){
+          forward();
+        }
+      
+      }
+      return true;
+    }
+  }
 
   //EFFECTS:  Returns whether the cursor is at the past-the-end position.
-  bool is_at_end() const;
+  bool is_at_end() const{
+    if (cursor == data.end()|| data_at_cursor()=='\n'){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
 
   //REQUIRES: the cursor is not at the past-the-end position
   //EFFECTS:  Returns the character at the current cursor
-  char data_at_cursor() const;
+  char data_at_cursor() const{
+    if (cursor != data.end() && *cursor!='\n'){
+      return *cursor;
+    }
+    else{
+      return '\0';
+    }
+  }
 
   //EFFECTS:  Returns the row of the character at the current cursor.
-  int get_row() const;
+  int get_row() const{
+    return row;
+  }
 
   //EFFECTS:  Returns the column of the character at the current cursor.
-  int get_column() const;
+  int get_column() const{
+    return column;
+  }
 
   //EFFECTS:  Returns the index of the character at the current cursor
   //          with respect to the entire contents. If the cursor is at
   //          the past-the-end position, returns size() as the index.
-  int get_index() const;
+  int get_index() const{
+    return index;
+  }
 
   //EFFECTS:  Returns the number of characters in the buffer.
-  int size() const;
+  int size() const{
+    return data.size();
+  }
 
   //EFFECTS:  Returns the contents of the text buffer as a string.
   //HINT: Implement this using the string constructor that takes a
   //      begin and end iterator. You may use this implementation:
   //        return std::string(data.begin(), data.end());
-  std::string stringify() const;
+  std::string stringify() const{
+    return std::string(data.begin(), data.end());
+  }
 
   //EFFECTS: Computes the column of the cursor within the current row.
   //NOTE: This does not assume that the "column" member variable has
   //      a correct value (i.e. the row/column INVARIANT can be broken).
-  int compute_column() const;
-};
+  int compute_column() const{
+    int column = 0;
+    std::list<char>::iterator it = cursor;
+    while (it != data.begin() && *(--it) != '\n') {
+        ++column;
+    }
+    return column;
+      
+    }
+      
+
+    
+  };
+
 
 #endif // TEXTBUFFER_HPP
