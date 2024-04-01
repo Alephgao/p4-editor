@@ -88,6 +88,7 @@ void TextBuffer::move_to_row_end() {
     }
 }
 
+/*
 // Moves the cursor to the specified column in the current row
 void TextBuffer::move_to_column(int new_column) {
     move_to_row_start();
@@ -95,9 +96,22 @@ void TextBuffer::move_to_column(int new_column) {
       forward();
     }
 }
+*/
+
+void TextBuffer::move_to_column(int new_column) {
+    move_to_row_start(); // Move to the start of the current row
+    int current_col = 0;
+
+    // Move forward until the desired column or the end of the row
+    while (current_col < new_column && cursor != data.end() && *cursor != '\n') {
+        forward();
+        current_col++;
+    }
+}
 
 // Moves the cursor up to the previous row
 bool TextBuffer::up() {
+    /*
     int goalCol = column;
     if(row == 1){
       return false;
@@ -116,10 +130,28 @@ bool TextBuffer::up() {
       return true;
     }
     return true;  // Or false, depending on the implementation
+    */
+
+
+   if (row == 1) {  
+        return false;
+    }
+
+    int goalCol = column;
+    move_to_row_start();  
+    backward();          
+    move_to_row_start();  
+
+    for (int col = 0; col < goalCol && cursor != data.end() && *cursor != '\n'; col++) {
+        forward();  
+    }
+
+    return true;
 }
 
 // Moves the cursor down to the next row
 bool TextBuffer::down() {
+    /*
     int colGoal = column;
     move_to_row_end();
     if (cursor == data.end()){
@@ -141,6 +173,21 @@ bool TextBuffer::down() {
       return true;
     }
     return true;  // Or false, depending on the implementation
+    */
+
+    move_to_row_end();  
+    if (!forward()) { 
+        return false;
+    }
+
+    int goalCol = get_column();  
+    move_to_row_start();  
+
+    for (int col = 0; col < goalCol && cursor != data.end() && *cursor != '\n'; col++) {
+        forward();
+    }
+
+    return true;
 }
 
 // Checks if the cursor is at the end of the text
@@ -184,15 +231,9 @@ std::string TextBuffer::stringify() const {
 // Computes the column of the cursor within the current row
 int TextBuffer::compute_column() const {
     int column = 0;
-    std::list<char>::iterator it = cursor;
+    Iterator it = cursor;  
     while (it != data.begin() && *(--it) != '\n') {
         ++column;
     }
     return column;
-}
-
-
-int main(){
-    cout << "Hello World" << endl;
-    return 0;
 }
