@@ -158,6 +158,20 @@ public:
     clear();
   }
 
+  List(const List<T>& other) : first(nullptr), last(nullptr), sizeList(0) {
+    copy_all(other);
+}
+
+List& operator=(const List& other) {
+    if (this != &other) { 
+        clear(); 
+        copy_all(other);
+    }else{
+      return *this;
+    }
+    return *this; 
+}
+
 
 private:
   //a private type

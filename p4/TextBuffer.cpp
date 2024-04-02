@@ -215,3 +215,4 @@ int TextBuffer::compute_column() const {
     }
     return column;
 }
+
