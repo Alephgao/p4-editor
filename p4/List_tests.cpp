@@ -127,5 +127,118 @@ TEST(test_list_copy_constructor_bug) {
     }
 }
 
+TEST(test_list_iterator_dereferencing) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test dereferencing
+    List<int>::Iterator it = list.begin();
+    ASSERT_EQUAL(*it, 1);
+    ++it;
+    ASSERT_EQUAL(*it, 2);
+    ++it;
+    ASSERT_EQUAL(*it, 3);
+}
+
+TEST(test_list_iterator_prefix_increment) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test prefix increment
+    List<int>::Iterator it = list.begin();
+    ASSERT_EQUAL(*it, 1);
+    ++it;
+    ASSERT_EQUAL(*it, 2);
+    ++it;
+    ASSERT_EQUAL(*it, 3);
+}
+
+TEST(test_list_iterator_postfix_increment) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test postfix increment
+    List<int>::Iterator it = list.begin();
+    ASSERT_EQUAL(*it++, 1);
+    ASSERT_EQUAL(*it++, 2);
+    ASSERT_EQUAL(*it++, 3);
+}
+
+TEST(test_list_iterator_prefix_decrement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test prefix decrement
+    List<int>::Iterator it = list.end();
+    --it;
+    ASSERT_EQUAL(*it, 3);
+    --it;
+    ASSERT_EQUAL(*it, 2);
+    --it;
+    ASSERT_EQUAL(*it, 1);
+}
+
+TEST(test_list_iterator_postfix_decrement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test postfix decrement
+    List<int>::Iterator it = list.end();
+    ASSERT_EQUAL(*it--, 3);
+    ASSERT_EQUAL(*it--, 2);
+    ASSERT_EQUAL(*it--, 1);
+}
+
+TEST(test_list_iterator_comparison) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test iterator comparison
+    List<int>::Iterator it1 = list.begin();
+    List<int>::Iterator it2 = list.begin();
+    List<int>::Iterator it3 = list.end();
+    ASSERT_EQUAL(it1, it2);
+    ASSERT_NOT_EQUAL(it1, it3);
+    ASSERT_NOT_EQUAL(it2, it3);
+}
+
+TEST(test_list_iterator_assignment) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test iterator assignment
+    List<int>::Iterator it1 = list.begin();
+    List<int>::Iterator it2 = it1;
+    ++it1;
+    ASSERT_NOT_EQUAL(it1, it2);
+}
+
+TEST(test_list_iterator_validity_after_modifications) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    // Test iterator validity after modifications
+    List<int>::Iterator it = list.begin();
+    ++it; // Move iterator to the second element
+    list.pop_front(); // Remove the first element
+    ASSERT_EQUAL(*it, 2); // Check if iterator is still valid
+}
+
 
 TEST_MAIN()
