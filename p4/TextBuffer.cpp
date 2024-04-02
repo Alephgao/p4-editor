@@ -78,14 +78,7 @@ bool TextBuffer::remove() {
     }
 
     if (c == '\n') {
-        if (cursor == data.end()) {
-            //row--;
-            //move_to_row_end();
-            column = compute_column();  
-        } else {
-            //row--;
             column = compute_column();
-        }
     }
 
     return true;

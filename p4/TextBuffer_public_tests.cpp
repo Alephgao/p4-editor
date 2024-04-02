@@ -82,6 +82,7 @@ TEST(test_remove) {
   ASSERT_EQUAL(buffer.stringify() , "abC");
   buffer.backward();
   buffer.remove();
+  cout << buffer.stringify() << endl;
   ASSERT_EQUAL(buffer.get_row() , 1);
   ASSERT_EQUAL(buffer.get_column() , 2);
   ASSERT_EQUAL(buffer.stringify() , "ab");

@@ -6,10 +6,11 @@
  * EECS 280 Project 4
  */
 
-#include <__config>
 #include <iostream>
 #include <iterator> //std::bidirectional_iterator_tag
 #include <cassert>  //assert
+
+
 
 
 template <typename T>
@@ -101,7 +102,6 @@ public:
   //EFFECTS:  removes the item at the front of the list
   void pop_front(){
     if (first == last){
-      // there is only 1 node in the list
       Node* onlyElement = first;
       delete onlyElement;
       sizeList--;
