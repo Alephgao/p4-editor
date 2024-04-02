@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -66,6 +67,13 @@ bool TextBuffer::remove() {
     }
     bool is_newline = (*cursor == '\n');
     cursor = data.erase(cursor);
+
+     if (data.empty()) { // Check if the buffer is empty after removal
+        row = 1;
+        column = 0;
+        index = 0;
+        return true;
+    }
 
     if (is_newline) {
         if (cursor == data.end()) {
